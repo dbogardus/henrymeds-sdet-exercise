@@ -1,0 +1,21 @@
+{
+  "name": "henrymeds-sdet-exercise",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "play-report": "npx playwright show-report",
+    "allure-report": "allure generate ./allure-results --clean",
+    "open-report": "npm run allure-report && allure open ./allure-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.41.2",
+    "allure-commandline": "^2.27.0",
+    "allure-playwright": "^2.12.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.4"
+  }
+}
