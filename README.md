@@ -32,7 +32,3 @@
 #### **To open Playwright's unified Html report of test results**
 
     npm run play-report
-
-
-
-- Possible bug - I noticed on Contact Details page, the preffered pronouns "they/them" are not capitalized like "He/Him" and "She/Her", is consistent
