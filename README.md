@@ -8,7 +8,7 @@
 - Video recap of project : [https://jam.dev/c/3e30e7cd-4a43-4d3c-847b-17ed19c25278]
 
 
-## Planning done prior to writing code
+## Principles applied
 - Complete the exercise in the language and libraries used by Henry Meds
 - Short methods for readability 
 - Don't create instances of Page objects, just use static methods, we don't want references to our Page object spread around
