@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { PageUtils } from '../../../utils/pageUtils';
 
-export class NextStepsPage {
+export class NextSteps_Page {
 
   static async clickContinue(page: Page): Promise<void> {
     this.verifyOnPage(page);

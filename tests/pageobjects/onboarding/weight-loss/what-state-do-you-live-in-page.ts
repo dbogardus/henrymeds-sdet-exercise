@@ -3,13 +3,13 @@ import { PageUtils } from '../../../utils/pageUtils';
 import { State, StateText } from '../../../types/clientPerson';
 
 
-export class WhatStatePage {
+export class WhatStateDoYouLiveIn_Page {
 
   static readonly pageURL: string = "https://onboard.henrymeds.com/app/appointment/weightloss-phen"; 
   
   static async navigate(page: Page) {
-    console.log('Loading WhatStatePage with url [' + WhatStatePage.pageURL + ']');
-    await page.goto(WhatStatePage.pageURL, { waitUntil: 'networkidle' });
+    console.log('Loading WhatStatePage with url [' + WhatStateDoYouLiveIn_Page.pageURL + ']');
+    await page.goto(WhatStateDoYouLiveIn_Page.pageURL, { waitUntil: 'networkidle' });
     await this.verifyOnPage(page);
   }
 

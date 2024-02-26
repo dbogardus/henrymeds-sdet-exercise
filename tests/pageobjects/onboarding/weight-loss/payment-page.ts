@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { PageUtils } from '../../../utils/pageUtils';
 
-export class PaymentPage {
+export class Payment_Page {
 
   static async verifyFirstName(page: Page, expectedValue: string): Promise<void> {
     await this.verifyOnPage(page);

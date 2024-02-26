@@ -2,7 +2,7 @@ import { Page } from '@playwright/test';
 import { PageUtils } from '../../../utils/pageUtils';
 import { ClientPerson } from '../../../types/clientPerson';
 
-export class ShippingPage {
+export class Shipping_Page {
 
   static async fillInShippingInfo(page: Page, client: ClientPerson): Promise<void> {
     await this.verifyOnPage(page);

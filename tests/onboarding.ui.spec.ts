@@ -1,29 +1,29 @@
 import { test, expect, Page } from '@playwright/test';
 import { ClientPersonBuilder, ClientPerson, Therapy, StateText } from './types/clientPerson';
-import { WhatStatePage } from './pageobjects/onboarding/weight-loss/what-state-page';
-import { NextAvailableTimePage } from './pageobjects/onboarding/weight-loss/next-available-time-page';
-import { NextStepsPage } from './pageobjects/onboarding/weight-loss/next-steps-page';
-import { ContactDetailsPage } from './pageobjects/onboarding/weight-loss/contact-details-page';
-import { ShippingPage } from './pageobjects/onboarding/weight-loss/shipping-page';
-import { PaymentPage } from './pageobjects/onboarding/weight-loss/payment-page';
+import { WhatStateDoYouLiveIn_Page } from './pageobjects/onboarding/weight-loss/what-state-do-you-live-in-page';
+import { NextAvailableTime_Page } from './pageobjects/onboarding/weight-loss/next-available-time-page';
+import { NextSteps_Page } from './pageobjects/onboarding/weight-loss/next-steps-page';
+import { ContactDetails_Page } from './pageobjects/onboarding/weight-loss/contact-details-page';
+import { Shipping_Page } from './pageobjects/onboarding/weight-loss/shipping-page';
+import { Payment_Page } from './pageobjects/onboarding/weight-loss/payment-page';
 
 test('Weight Loss Onboarding', async ({ page }) => {  
   
   const weightLossClient: ClientPerson = new ClientPersonBuilder().setTherapy(Therapy.WEIGHT_LOSS).build();
 
-  await WhatStatePage.navigate(page);
-  await WhatStatePage.clickStateButton(page, weightLossClient.state);
+  await WhatStateDoYouLiveIn_Page.navigate(page);
+  await WhatStateDoYouLiveIn_Page.clickStateButton(page, weightLossClient.state);
 
-  await NextAvailableTimePage.clickFirstAppointment(page);
+  await NextAvailableTime_Page.clickFirstAppointment(page);
 
-  await NextStepsPage.clickContinue(page);
+  await NextSteps_Page.clickContinue(page);
 
-  await ContactDetailsPage.fillInContactInfo(page, weightLossClient);
+  await ContactDetails_Page.fillInContactInfo(page, weightLossClient);
 
-  await ShippingPage.fillInShippingInfo(page, weightLossClient);
+  await Shipping_Page.fillInShippingInfo(page, weightLossClient);
 
-  await PaymentPage.verifyFirstName(page, weightLossClient.legalFirstName);
-  await PaymentPage.verifyLastName(page, weightLossClient.legalLastName);
+  await Payment_Page.verifyFirstName(page, weightLossClient.legalFirstName);
+  await Payment_Page.verifyLastName(page, weightLossClient.legalLastName);
 
 });
 

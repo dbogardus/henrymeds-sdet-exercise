@@ -2,7 +2,7 @@ import { Page } from '@playwright/test';
 import { PageUtils } from '../../../utils/pageUtils';
 import { ClientPerson, SexAssignedAtBirthText, PreferredPronounsText } from '../../../types/clientPerson';
 
-export class ContactDetailsPage {
+export class ContactDetails_Page {
 
   static async fillInContactInfo(page: Page, client: ClientPerson): Promise<void> {
     await this.verifyOnPage(page);
