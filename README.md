@@ -15,7 +15,7 @@
 - Each action taken verifies it was successful
 - ClientPerson information in stored in it's own object that will be used by pages to populate the data on their pages
 - Use AI to maximize speed of development (Copilot, GPT4, Perplexity, Phind)
-- The API test was quick and easy by using Firefox to capture a .har file of the network call to cappedAvailableTimes. Then have GPT4 build the network interaction. 
+- [The API test](tests/cappedAvailableTimes.api.spec.ts) was quick and easy by using Firefox to capture [a HTTP Archive file](onboard.henrymeds.com_v1call.har), of the network call to cappedAvailableTimes. Then had GPT4 write the network interaction code. 
 
 #### **To run the cappedAvailableTimes api test**
 

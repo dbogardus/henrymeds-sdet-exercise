@@ -1,5 +1,6 @@
 import { test, expect, APIRequestContext } from '@playwright/test';
 
+//This test was built by recording a .har file in firefox, then using GPT4 to convert it to a test
 test('cappedAvailableTimes returns values for future dates', async ({ request }) => {
 
   const now = new Date();
