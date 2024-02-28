@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 
 export class PageUtils {
 
@@ -23,37 +23,25 @@ export class PageUtils {
   static async fillInputField(page: Page, testId: string, value: string): Promise<void> {
     console.log('Filling input field with testId [' + testId + '] and value [' + value + ']');
     await page.fill(`[data-testid="${testId}"]`, value);
-    await this.waitForInputValue(page, testId, value); // Verify the value was set
+    //await expect(page.getByTestId(testId)).toHaveValue(value);
+    await this.verifyInputValue(page, testId, value); // Verify the value was set
   }
 
-  static async waitForInputValue(page: Page, testId: string, expectedValue: string): Promise<void> {
-    console.log('Waiting for input field with testId [' + testId + '] to have value [' + expectedValue + ']');
-    await page.waitForFunction(
-      ([selector, value]) => {
-        const element = document.querySelector(selector) as HTMLInputElement;
-        return element && element.value === value;
-      },
-      [`[data-testid="${testId}"]`, expectedValue]
-    );
+  static async verifyInputValue(page: Page, testId: string, expectedValue: string): Promise<void> {
+    console.log('Verifying Input field with testId [' + testId + '] to have value [' + expectedValue + ']');
+    await expect(page.getByTestId(testId)).toHaveValue(expectedValue);
   }
 
   static async selectDropdownOption(page: Page, testId: string, optionValue: string): Promise<void> {
     console.log('Selecting dropdown option with testId [' + testId + '] to value [' + optionValue + ']');
     const selector = `[data-testid="${testId}"]`;
     await page.selectOption(selector, optionValue);
-    await this.waitForDropdownValue(page, testId, optionValue); // Verify the value was set
+    await this.verifyDropdownValue(page, testId, optionValue); // Verify the value was set
   }
 
-  static async waitForDropdownValue(page: Page, testId: string, expectedText: string): Promise<void> {
-    console.log('Waiting for Dropdown with testId [' + testId + '] to have value [' + expectedText + ']');
-    await page.waitForFunction(
-      ([testId, expectedText]) => {
-          const select = document.querySelector(`[data-testid="${testId}"]`) as HTMLSelectElement;;
-          const selectedOption = select.options[select.selectedIndex];
-          return selectedOption && selectedOption.text === expectedText;
-      },
-      [testId, expectedText] // Pass parameters as an array
-  );
+  static async verifyDropdownValue(page: Page, testId: string, expectedText: string): Promise<void> {
+    console.log('Verifying Dropdown with testId [' + testId + '] to have value [' + expectedText + ']');
+    await expect(page.locator('select[data-testid="' + testId + '"] option:checked')).toHaveText(expectedText);
   }
 
   static async clickButtonByText(page: Page, buttonText: string): Promise<void> {
@@ -61,20 +49,19 @@ export class PageUtils {
     await page.click(`button:has-text("${buttonText}")`);
   }
 
-  static async setCheckboxValue(page: Page, testId: string, value: boolean): Promise<void> {
-    console.log('Setting checkbox with testId [' + testId + '] to value [' + value + ']');
+  static async setCheckboxValue(page: Page, testId: string, isChecked: boolean): Promise<void> {
+    console.log('Setting checkbox with testId [' + testId + '] to value [' + isChecked + ']');
     const checked = await page.isChecked(`[data-testid="${testId}"]`);
-    if (value !== checked) {
+    if (isChecked !== checked) {
         await page.click(`[data-testid="${testId}"]`);
     }
-    await this.getCheckboxValue (page, testId) === value;
+    await this.verifyCheckboxValue (page, testId, isChecked); // Verify the value was set
   }
 
-  static async getCheckboxValue(page: Page, testId: string): Promise<boolean> {
-    console.log('Getting checkbox value with testId [' + testId + ']'); 
-    return page.isChecked(`[data-testid="${testId}"]`);
+  static async verifyCheckboxValue(page: Page, testId: string, isChecked: boolean): Promise<void> {
+    console.log('Verifying checkbox with testId [' + testId + '] is checked [' + isChecked + ']'); 
+    await expect(page.locator('[data-testid="' + testId + '"]')).toBeChecked({checked: isChecked});
   }
-
 
   static async submitForm(page: Page): Promise<void> {
     console.log('Submitting form');

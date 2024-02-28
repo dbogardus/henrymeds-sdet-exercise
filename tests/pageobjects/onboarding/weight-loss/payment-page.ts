@@ -5,12 +5,12 @@ export class Payment_Page {
 
   static async verifyFirstName(page: Page, expectedValue: string): Promise<void> {
     await this.verifyOnPage(page);
-    await PageUtils.waitForInputValue(page, `firstName`, expectedValue);
+    await PageUtils.verifyInputValue(page, `firstName`, expectedValue);
   }
 
   static async verifyLastName(page: Page, expectedValue: string): Promise<void> {
     await this.verifyOnPage(page);
-    await PageUtils.waitForInputValue(page, `lastName`, expectedValue);
+    await PageUtils.verifyInputValue(page, `lastName`, expectedValue);
   }
 
   static async verifyOnPage(page: Page) {
