@@ -9,10 +9,9 @@ import { Payment_Page } from './pageobjects/onboarding/weight-loss/payment-page'
 import ClientPersonBuilder, { ClientPerson, PreferredPronounsText, SexAssignedAtBirthText, StateText, Therapy } from "./types/clientPerson";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// This test uses Zerostep to interpret natural language commands and perform the page operations. 
+// This test uses Zerostep to interpret natural language commands to perform the page operations. 
 // Zerostep uses GPT 3.5, sending the HTML and instructions over to OpenAI and acting on the response. 
-// I could see this technique calling a fast and local company-tuned LLM to be even more capable, allowing a prompt like :
-// "Complete the onboarding flow for a weight loss client, and verify required fields are enforced".
+// I could see this technique being used to call a company-tuned LLM to be even more capable 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
