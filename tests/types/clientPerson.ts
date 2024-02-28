@@ -35,7 +35,7 @@ export class ClientPerson {
 
 export class ClientPersonBuilder {
     private therapy!: Therapy; //Required to be set by the builder <<<<<<<<<<<<<<<<<<<<<<<<<
-    private state: State = State.CA; // Default to Utah
+    private state: State = State.UT; // Default to Utah
     private legalFirstName: string = 'John'; // Default to a common name
     private legalLastName: string = 'Doe'; // Default to a common name
     private email: string = 'john.doe@example.com'; // Default to a placeholder email

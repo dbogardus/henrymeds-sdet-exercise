@@ -4,6 +4,8 @@ export class PageUtils {
 
   static async verifyTextIsOnPage(page: Page, textToWaitFor: string): Promise<void> {
     await page.waitForLoadState();
+    await page.waitForSelector('body');
+
     const timeout = 10000;
     try {
       await page.waitForFunction(

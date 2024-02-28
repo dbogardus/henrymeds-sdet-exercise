@@ -11,6 +11,7 @@ export class NextAvailableTime_Page {
 
   static async verifyOnPage(page: Page) {
     console.log('Verifying on NextAvailableTimePage');
+    await page.locator('button:text("PM")').nth(0).waitFor();
     await PageUtils.verifyTextIsOnPage(page, 'Next Available Time');
   }
 }

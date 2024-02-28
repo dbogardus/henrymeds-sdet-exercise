@@ -1,5 +1,5 @@
-import { test, expect, Page } from '@playwright/test';
-import { ClientPersonBuilder, ClientPerson, Therapy, StateText } from './types/clientPerson';
+import { test } from '@playwright/test';
+import { ClientPersonBuilder, ClientPerson, Therapy } from './types/clientPerson';
 import { WhatStateDoYouLiveIn_Page } from './pageobjects/onboarding/weight-loss/what-state-do-you-live-in-page';
 import { NextAvailableTime_Page } from './pageobjects/onboarding/weight-loss/next-available-time-page';
 import { NextSteps_Page } from './pageobjects/onboarding/weight-loss/next-steps-page';
@@ -7,8 +7,8 @@ import { ContactDetails_Page } from './pageobjects/onboarding/weight-loss/contac
 import { Shipping_Page } from './pageobjects/onboarding/weight-loss/shipping-page';
 import { Payment_Page } from './pageobjects/onboarding/weight-loss/payment-page';
 
-test('Weight Loss Onboarding', async ({ page }) => {  
-  
+test('Weight Loss Onboarding', async ({ page }) => {
+
   const weightLossClient: ClientPerson = new ClientPersonBuilder().setTherapy(Therapy.WEIGHT_LOSS).build();
 
   await WhatStateDoYouLiveIn_Page.navigate(page);
