@@ -19,15 +19,15 @@
 - Use AI to maximize speed of development (Copilot, GPT4, Perplexity, Phind)
 - [The API test](tests/cappedAvailableTimes.api.spec.ts) was quick and easy by using Firefox to capture [a HTTP Archive file](onboard.henrymeds.com_v1call.har), of the network call to cappedAvailableTimes. Then had GPT4 write the network interaction code. 
 
-#### **To run the cappedAvailableTimes api test**
+#### **To run the [cappedAvailableTimes](tests/cappedAvailableTimes.api.spec.ts) api test**
 
     npx playwright test cappedAvailableTimes.api.spec.ts
 
-#### **To run the "standard" onboarding browser test** 
+#### **To run the ["standard" onboarding browser test](tests/onboarding.ui.spec.ts)** 
 
     npx playwright test onboarding.ui.spec.ts --headed
 
-#### **Run the AI based onboarding, which uses natural language prompts**
+#### **To run the [AI based onboarding test](tests/onboarding.ui.ai.spec.ts), which uses natural language prompts**
 
     export ZEROSTEP_TOKEN='0step:the-rest-of-your-token-here' // ZEROSTEP_TOKEN must be set, get it from https://app.zerostep.com/account
 
