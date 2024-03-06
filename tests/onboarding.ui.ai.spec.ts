@@ -11,7 +11,6 @@ import ClientPersonBuilder, { ClientPerson, PreferredPronounsText, SexAssignedAt
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // This test uses Zerostep to interpret natural language commands to perform the page operations. 
 // Zerostep uses GPT 3.5, sending the HTML and instructions over to OpenAI and acting on the response. 
-// I could see this technique being used to call a company-tuned LLM to be even more capable 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -20,7 +19,7 @@ import ClientPersonBuilder, { ClientPerson, PreferredPronounsText, SexAssignedAt
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 test("Onboarding test using AI", async ({ page }) => {
 
-    test.setTimeout(120000); // This test can take a while due to the AI calls       
+    test.setTimeout(60000); // This test can take a little while longer due to the calls to ZeroStep
 
     const weightLossClient: ClientPerson = new ClientPersonBuilder().setTherapy(Therapy.WEIGHT_LOSS).build();
 
@@ -46,21 +45,32 @@ test("Onboarding test using AI", async ({ page }) => {
 });
 
 async function ShippingPage_FillInWithAI(page: Page, weightLossClient: ClientPerson) {
-    await ai("Fill in Address Line 1 with '" + weightLossClient.shippingAddressLine1 + "'", { page, test });
-    await ai("Fill in Address Line 2 with '" + weightLossClient.shippingAddressLine2 + "'", { page, test });
-    await ai("Fill in City with '" + weightLossClient.shippingCity + "'", { page, test });
-    await ai("Fill in Zip with '" + weightLossClient.shippingZip + "'", { page, test });
+    
+    //Parallelize the form fill
+    let shippingPageFormFill: string[] = [];
+    shippingPageFormFill.push("Fill in Address Line 1 with '" + weightLossClient.shippingAddressLine1 + "'");
+    shippingPageFormFill.push("Fill in Address Line 2 with '" + weightLossClient.shippingAddressLine2 + "'");
+    shippingPageFormFill.push("Fill in City with '" + weightLossClient.shippingCity + "'");
+    shippingPageFormFill.push("Fill in Zip with '" + weightLossClient.shippingZip + "'");
+    await ai(shippingPageFormFill, { page, test });
+
     await ai("Click 'Continue'", { page, test });
 }
 
 async function ContactDetailsPage_FillInWithAI(page: Page, weightLossClient: ClientPerson) {
-    await ai("Fill in the first name with + '" + weightLossClient.legalFirstName + "'", { page, test });
-    await ai("Fill in the last name with '" + weightLossClient.legalLastName + "'", { page, test });
-    await ai("Fill in the text fields 'Email Address *' and 'Verify Email Address *' with + '" + weightLossClient.email + "'", { page, test });
-    await ai("Fill in the Date of Birth with + '" + weightLossClient.dateOfBirth + "'", { page, test });
-    await ai("Fill in the Phone Number with + '" + weightLossClient.phoneNumber + "'", { page, test });
-    await ai("For Sex Assigned At Birth, choose + '" + SexAssignedAtBirthText[weightLossClient.sexAssignedAtBirth] + "'", { page, test });
-    await ai("For 'Preferred Gender Pronouns', choose + '" + PreferredPronounsText[weightLossClient.preferredPronouns] + "'", { page, test });
-    await ai("Click the checkbox to accept the terms and conditions", { page, test });
+
+    //Parallelize the form fill
+    let contactDetailsFormFill: string[] = [];
+    contactDetailsFormFill.push("Fill in the first name with + '" + weightLossClient.legalFirstName + "'");
+    contactDetailsFormFill.push("Fill in the last name with '" + weightLossClient.legalLastName + "'");
+    contactDetailsFormFill.push("Fill in the text field 'Email Address *' with + '" + weightLossClient.email + "'");
+    contactDetailsFormFill.push("Fill in the text field 'Verify Email Address *' with + '" + weightLossClient.email + "'");
+    contactDetailsFormFill.push("Fill in the Date of Birth with + '" + weightLossClient.dateOfBirth + "'");
+    contactDetailsFormFill.push("Fill in the Phone Number with + '" + weightLossClient.phoneNumber + "'");
+    contactDetailsFormFill.push("For Sex Assigned At Birth, choose + '" + SexAssignedAtBirthText[weightLossClient.sexAssignedAtBirth] + "'");
+    contactDetailsFormFill.push("For 'Preferred Gender Pronouns', choose + '" + PreferredPronounsText[weightLossClient.preferredPronouns] + "'");
+    contactDetailsFormFill.push("Click the checkbox to accept the terms and conditions");
+    await ai(contactDetailsFormFill, { page, test });
+
     await ai("Click 'Continue'", { page, test });
 }
