@@ -25,7 +25,6 @@ export class PageUtils {
   static async fillInputField(page: Page, testId: string, value: string): Promise<void> {
     console.log('Filling input field with testId [' + testId + '] and value [' + value + ']');
     await page.fill(`[data-testid="${testId}"]`, value);
-    //await expect(page.getByTestId(testId)).toHaveValue(value);
     await this.verifyInputValue(page, testId, value); // Verify the value was set
   }
 

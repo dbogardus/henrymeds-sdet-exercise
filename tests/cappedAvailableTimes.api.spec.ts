@@ -1,4 +1,4 @@
-import { test, expect, APIRequestContext } from '@playwright/test';
+import { test, expect, APIRequestContext, APIResponse } from '@playwright/test';
 
 //This test was built by recording a .har file in firefox, then using GPT4 to convert it to a test
 test('cappedAvailableTimes returns values for future dates', async ({ request }) => {
@@ -62,7 +62,7 @@ async function fetchCappedAvailableTimes(
   maximumDate: string,
   state: string = 'california',
   treatmentShortId: string = 'weightloss'
-): Promise<Response> { 
+): Promise<APIResponse> { 
   const response = await request.post('https://henry-prod.hasura.app/v1/graphql', {
     headers: {
       'content-type': 'application/json',
