@@ -36,10 +36,10 @@ test("Onboarding test using Autonomous AI", async ({ page }) => {
         "If you see checkboxes that aren't checked, give instructions to check them. " +
         "Be vigalant to ensure that if there's a 'Continue' button, it is clicked last. " +
         "If there is more than one action needed to interact with a page, return it in the format of [ACTION1],[ACTION2],[ACTION3], etc.  " +
-        "Some examples actions are [Fill in first name with 'Thomas'], or [Click the button labeled 'Continue'] . " + 
+        "Example actions : [Fill in first name with 'Thomas'],[Click the button labeled 'Continue'] ." + 
         "Ignore any elements that are related to cookies or privacy policies. " +
-        "If you see the words '" + Payment_Page.pageText + "', on the page, return 'FINISHED'. " +
-        "This is some test user information that should be used to fill in forms  : " + weightLossClient.toString();
+        "If you see the words '" + Payment_Page.pageText + "' on the page, return 'FINISHED'. " +
+        "Use this test user information to fill in forms  : " + weightLossClient.toString();
 
 
     await WhatStateDoYouLiveIn_Page.navigate(page);
@@ -94,7 +94,7 @@ async function OpenAI_Chat(page: Page, message: string): Promise<string[]> {
     const chatCompletion = await openai.chat.completions.create({
         messages: [{ role: 'user', content}],
         model: 'gpt-4-turbo-preview', // https://platform.openai.com/docs/models/
-        temperature : 0.1,
+        temperature : 0, //Lower temperature means more deterministic responses (0 is no randomness)
     });
 
     const response = chatCompletion.choices[0].message.content;
