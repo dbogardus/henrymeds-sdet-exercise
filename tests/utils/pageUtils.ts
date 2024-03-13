@@ -3,8 +3,7 @@ import { Page, expect } from '@playwright/test';
 export class PageUtils {
 
   static async verifyTextIsOnPage(page: Page, textToWaitFor: string): Promise<void> {
-    await page.waitForLoadState();
-    await page.waitForSelector('body');
+    await this.waitForPageLoad(page);
 
     const timeout = 10000;
     try {
@@ -20,6 +19,12 @@ export class PageUtils {
       throw new Error("Expected text doesn't exist on page [" + textToWaitFor + "]. " + 
         "Current page has title [" + await page.title() + "]"); 
     }
+  }
+
+  static async waitForPageLoad(page: Page): Promise<void> {
+    await page.waitForLoadState('load');
+    await page.waitForLoadState('domcontentloaded')
+    await page.waitForSelector('body');
   }
 
   static async fillInputField(page: Page, testId: string, value: string): Promise<void> {
