@@ -63,7 +63,7 @@ test("Onboarding test using Autonomous AI", async ({ page }) => {
         await page.waitForTimeout(2500); //page.waitForLoadState doesn't work reliably ¯\_(ツ)_/¯
     }
 
-
+    // After we come out of the loop we expect to be on the Payment page
     await Payment_Page.verifyOnPage(page);
     await Payment_Page.verifyFirstName(page, weightLossClient.legalFirstName);
     await Payment_Page.verifyLastName(page, weightLossClient.legalLastName);
