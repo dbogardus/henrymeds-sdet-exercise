@@ -3,6 +3,8 @@ import { PageUtils } from '../../../utils/pageUtils';
 
 export class Payment_Page {
 
+  static readonly pageText = 'Payment Method'
+
   static async verifyFirstName(page: Page, expectedValue: string): Promise<void> {
     await this.verifyOnPage(page);
     await PageUtils.verifyInputValue(page, `firstName`, expectedValue);
@@ -15,6 +17,6 @@ export class Payment_Page {
 
   static async verifyOnPage(page: Page) {
     console.log('Verifying on PaymentPage');
-    await PageUtils.verifyTextIsOnPage(page, 'Payment Method');
+    await PageUtils.verifyTextIsOnPage(page, this.pageText);
   }
 }

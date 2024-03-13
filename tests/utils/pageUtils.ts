@@ -21,9 +21,38 @@ export class PageUtils {
     }
   }
 
+  static async waitForPageAndCheckText(page: Page, expectedText: string, selector: string): Promise<boolean> {
+    try {
+        // Wait for the page to load. You can also use 'domcontentloaded' or 'networkidle'
+        await this.waitForPageLoad(page);
+
+        // Create a locator for the element containing the text
+        const textElement = page.locator(selector);
+
+        // Wait for the element with the specified selector to appear within a timeout
+        await textElement.waitFor({ state: 'attached', timeout: 5000 });
+
+        // Retrieve the text content of the element
+        const textContent = await textElement.textContent();
+
+        // Check if the retrieved text contains the expected text
+        if (textContent && textContent.includes(expectedText)) {
+            console.log(`Found the expected text: "${expectedText}"`);
+            return true;
+        } else {
+            console.log(`The expected text: "${expectedText}" was not found.`);
+            return false;
+        }
+    } catch (error) {
+        console.error(`An error occurred while searching for text: ${error}`);
+        return false;
+    }
+}
+
   static async waitForPageLoad(page: Page): Promise<void> {
     await page.waitForLoadState('load');
     await page.waitForLoadState('domcontentloaded')
+    await page.waitForLoadState('networkidle');
     await page.waitForSelector('body');
   }
 
