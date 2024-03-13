@@ -35,39 +35,46 @@ test("Onboarding test using Autonomous AI", async ({ page }) => {
 
     const instructionsForPageInteractions = await OpenAI_Chat(page, instructions);
 
+    await ai(instructionsForPageInteractions, { page, test });
+ 
+    await NextAvailableTime_Page.verifyOnPage(page);
+
     //await Anthropic_Chat(page, instructions);
 
     //await Gemini_Chat(page, instructions);
 });
 
-async function OpenAI_Chat(page: Page, message: string) {
+async function OpenAI_Chat(page: Page, message: string): Promise<string> {
 
-    const openai = new OpenAI({
-        apiKey: process.env['OPENAI_API_KEY'], // Replace with your actual API key
-      });
+    const apiKey = process.env['OPENAI_API_KEY'];
+    if (!apiKey) {
+        throw new Error("OPENAI_API_KEY is not defined in the environment variables");
+    }  
+    const openai = new OpenAI({apiKey});
 
     const content = message + "This the html of the page I'm looking at now: " + await stripDownHTML(page);
 
-    try {
-        // Create a chat completion
-        const chatCompletion = await openai.chat.completions.create({
-          messages: [{ role: 'user', content}],
-          model: 'gpt-3.5-turbo', // Specify the model you want to use
-        });
-    
-        // Output the result
-        console.log(chatCompletion.choices[0].message.content);
-      } catch (error) {
-        // Handle any errors that occur during the API call
-        console.error(error);
-      }
+    // Create a chat completion
+    const chatCompletion = await openai.chat.completions.create({
+        messages: [{ role: 'user', content}],
+        model: 'gpt-3.5-turbo', // Specify the model you want to use
+    });
+
+    const response = chatCompletion.choices[0].message.content;
+    // Output the result
+    if(response){
+        console.log(response);
+        return response;
+    }else{
+        throw new Error("Response was empty");
+    }
 }
 
 
 async function Anthropic_Chat(page: Page, message: string) {
 
     const anthropic = new Anthropic({
-        apiKey: process.env['ANTHROPIC_API_KEY'], // Ensure your API key is stored in your environment variables
+        apiKey: process.env['ANTHROPIC_API_KEY'] || '', // Ensure your API key is stored in your environment variables
       });
 
     const content = message + "This the html of the page I'm looking at now: " + await stripDownHTML(page);
