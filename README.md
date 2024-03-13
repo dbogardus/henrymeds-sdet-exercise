@@ -29,8 +29,15 @@
 
 #### **To run the [AI based onboarding test](tests/onboarding.ui.ai.spec.ts), which uses natural language prompts**
 
-    export ZEROSTEP_TOKEN='0step:the-rest-of-your-token-here' // ZEROSTEP_TOKEN must be set, get it from https://app.zerostep.com/account
+    export ZEROSTEP_TOKEN='0step:the-rest-of-your-token-here' // Get from https://app.zerostep.com/account
 
     npx playwright test onboarding.ui.ai.spec.ts --headed
+
+#### **To run the [*Autononmous* AI based onboarding test](tests/onboarding.ui.ai.autonomous.spec.ts), which lets one AI decide what actions to take on the page, then uses another AI to perform the action**
+
+    export ZEROSTEP_TOKEN='0step:the-rest-of-your-token-here' 
+    export OPENAI_API_KEY='your-key-here' // Get from https://platform.openai.com/account/api-keys
+
+    npx playwright test onboarding.ui.ai.autonomous.spec.ts --headed
 
 
