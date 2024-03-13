@@ -1,21 +1,17 @@
 import { test, Page } from "@playwright/test";
 import { OpenAI } from "openai";
-import Anthropic from '@anthropic-ai/sdk';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ai } from '@zerostep/playwright';
 import { WhatStateDoYouLiveIn_Page } from './pageobjects/onboarding/weight-loss/what-state-do-you-live-in-page';
-import { NextAvailableTime_Page } from './pageobjects/onboarding/weight-loss/next-available-time-page';
-import { NextSteps_Page } from './pageobjects/onboarding/weight-loss/next-steps-page';
-import { ContactDetails_Page } from './pageobjects/onboarding/weight-loss/contact-details-page';
-import { Shipping_Page } from './pageobjects/onboarding/weight-loss/shipping-page';
 import { Payment_Page } from './pageobjects/onboarding/weight-loss/payment-page';
 import ClientPersonBuilder, { ClientPerson, PreferredPronounsText, SexAssignedAtBirthText, StateText, Therapy } from "./types/clientPerson";
 import { PageUtils } from "./utils/pageUtils";
 import { APITestType } from "@zerostep/playwright/lib/types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// This test uses Zerostep to interpret natural language commands to perform the page operations. 
-// Zerostep uses GPT 3.5, sending the HTML and instructions over to OpenAI and acting on the response. 
+// This test uses OpenAI to analyze web pages and get instructions on what is needed to complete thge web page, 
+// Then usese Zerostep to perform the interaction with the page. 
+//
+// The test has no foreknowledge of what to expect, it must use the AI utilities to analyze and interact with each page. 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,13 +21,14 @@ import { APITestType } from "@zerostep/playwright/lib/types";
 // OPENAI_API_KEY must be set as an environment variable, get it from https://platform.openai.com/account/api-keys
 // From your terminal : export OPENAI_API_KEY='your-key-here'
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 test("Onboarding test using Autonomous AI", async ({ page }) => {
 
-    test.setTimeout(120000); // This test can take a little while longer due to the calls to ZeroStep
+    test.setTimeout(120000); // Test can take a while due to calls to artificial intelligence APIs
 
     const weightLossClient: ClientPerson = new ClientPersonBuilder().setTherapy(Therapy.WEIGHT_LOSS).build();
 
-    const instructions = 
+    const instructions_for_ai = 
         "You are a browser interaction tool testing a web page. " + 
         "The page you are interacting with is part of an onboarding process." + 
         "If the page asks to select next available time, click the button with the first available time. " + 
@@ -53,7 +50,7 @@ test("Onboarding test using Autonomous AI", async ({ page }) => {
         pageLoadCount++;
         console.log(`Loop ${pageLoadCount}: Current page title is [${await page.title()}]`);
         
-        const pageActions = await OpenAI_Chat(page, instructions);
+        const pageActions = await OpenAI_Chat(page, instructions_for_ai);
 
         if (pageActions.length === 1 && pageActions[0] === "FINISHED") {
             console.log("Breaking out of the loop, AI says we're finished");
