@@ -64,7 +64,7 @@ test("Onboarding test using Autonomous AI", async ({ page }) => {
         
         PageUtils.waitForPageLoad(page);
 
-        await page.waitForTimeout(5000);
+        await page.waitForTimeout(2500);
     }
 
 
@@ -72,44 +72,6 @@ test("Onboarding test using Autonomous AI", async ({ page }) => {
     await Payment_Page.verifyFirstName(page, weightLossClient.legalFirstName);
     await Payment_Page.verifyLastName(page, weightLossClient.legalLastName);
 
-
-    // await WhatStateDoYouLiveIn_Page.navigate(page);
-
-    // await ai(await OpenAI_Chat(page, instructions), { page, test });
- 
-    // //await PageUtils.waitForPageLoad(page);
-
-    // await NextAvailableTime_Page.verifyOnPage(page);
-
-    // await ai(await OpenAI_Chat(page, instructions), { page, test });
-
-    // await NextSteps_Page.verifyOnPage(page);
-
-    // await ai(await OpenAI_Chat(page, instructions), { page, test });
-
-    ////////////////////////////////
-    // await WhatStateDoYouLiveIn_Page.navigate(page);
-    // await WhatStateDoYouLiveIn_Page.clickStateButton(page, weightLossClient.state);
-  
-    // await NextAvailableTime_Page.clickFirstAppointment(page);
-  
-    // await NextSteps_Page.clickContinue(page);
-
-    // await ContactDetails_Page.verifyOnPage(page);
-
-    // const pageActions = await OpenAI_Chat(page, instructions);
-
-    // await performActions(page, test, pageActions);
-
-    // await Shipping_Page.verifyOnPage(page);
-
-    // const pageActions2 = await OpenAI_Chat(page, instructions);
-
-    // await performActions(page, test, pageActions2);
-
-    // await Payment_Page.verifyOnPage(page);
-    // await Payment_Page.verifyFirstName(page, weightLossClient.legalFirstName);
-    // await Payment_Page.verifyLastName(page, weightLossClient.legalLastName);
 });
 
 async function performPageActions(page: Page, test: APITestType, pageActions: string[]): Promise<void> {
@@ -117,7 +79,6 @@ async function performPageActions(page: Page, test: APITestType, pageActions: st
         await ai(pageAction, { page, test });
     }
 }
-
 
 async function OpenAI_Chat(page: Page, message: string): Promise<string[]> {
 
@@ -166,63 +127,6 @@ function splitString(inputString: string): string[] {
     }
     
     return result;
-}
-
-
-async function Anthropic_Chat(page: Page, message: string): Promise<string> {
-
-    const anthropicApiKey = process.env['ANTHROPIC_API_KEY'];
-    if (!anthropicApiKey) {
-        throw new Error("ANTHROPIC_API_KEY is not defined in the environment variables");
-    }
-
-    const anthropic = new Anthropic({apiKey: anthropicApiKey});
-
-    const content = message + "This the html of the page I'm looking at now: " + await stripDownHTML(page);
-
-    const claudeResponse = await anthropic.messages.create({
-        max_tokens: 4000,
-        messages: [{
-            role: 'user',
-            content
-        }],
-        model: 'claude-2.1', 
-        });
-
-    const response = claudeResponse.content[0].text;
-
-    // Output the result
-    if(response){
-        console.log("Anthropic response [" + response + "]");
-        return response;
-    }else{
-        throw new Error("Response was empty");
-    }
-}
-
-
-async function Gemini_Chat(page: Page, message: string): Promise<string> {
-
-    const content = message + "This the html of the page I'm looking at now: " + await page.content();
-
-    console.log(content);
-    const geminiApiKey = process.env['GEMINI_API_KEY'];
-    if (!geminiApiKey) {
-        throw new Error("GEMINI_API_KEY is not defined in the environment variables");
-    }
-    const genAI = new GoogleGenerativeAI(geminiApiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-pro"});
-    const prompt = content;
-    const result = await model.generateContent(prompt);
-    const response = await result.response.text();
-   
-    // Output the result
-    if(response){
-        console.log("Gemini response [" + response + "]");
-        return response;
-    }else{
-        throw new Error("Response was empty");
-    }
 }
 
 
