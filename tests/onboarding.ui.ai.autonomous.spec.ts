@@ -11,6 +11,7 @@ import { Shipping_Page } from './pageobjects/onboarding/weight-loss/shipping-pag
 import { Payment_Page } from './pageobjects/onboarding/weight-loss/payment-page';
 import ClientPersonBuilder, { ClientPerson, PreferredPronounsText, SexAssignedAtBirthText, StateText, Therapy } from "./types/clientPerson";
 import { PageUtils } from "./utils/pageUtils";
+import { APITestType } from "@zerostep/playwright/lib/types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // This test uses Zerostep to interpret natural language commands to perform the page operations. 
@@ -26,30 +27,67 @@ import { PageUtils } from "./utils/pageUtils";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 test("Onboarding test using Autonomous AI", async ({ page }) => {
 
-    test.setTimeout(60000); // This test can take a little while longer due to the calls to ZeroStep
+    test.setTimeout(120000); // This test can take a little while longer due to the calls to ZeroStep
 
     const weightLossClient: ClientPerson = new ClientPersonBuilder().setTherapy(Therapy.WEIGHT_LOSS).build();
 
-    await WhatStateDoYouLiveIn_Page.navigate(page);
+    const instructions = "You are a browser interaction tool testing a web page. " + 
+        "This test is to complete onboarding. " + 
+        "Your reply should be the exact actions that should be taken. " +
+        "If there is more than one action needed to interact with a page, return it in the format of [ACTION1],[ACTION2],[ACTION3], etc.  " +
+        "If a form needs to be filled in, please indicate what to fill in each field, including the label on the field and the contents that should be filled in. " +
+        "Some examples action are [Fill in first name with 'Thomas'], or [Click the button labeled 'Continue'] . " + 
+        "The test should select the earliest available appointment. " + 
+        "Don't worry about closing banners or popups, just focus on the main content of the page. If you see checkboxes, give instructions to click each of them." +
+        "This is some test user information that should be used to fill in forms  : " + weightLossClient.toString();
 
-    const instructions = "I am a new weight loss patient, trying to complete onboarding to get some medication. Tell me what action I need to take in my web browser to proceed to the next page if I live in the state of California, and want the earliest available appointment. Your reply should be one sentence with the exact action I need to take.";
+    // await WhatStateDoYouLiveIn_Page.navigate(page);
 
-    await ai(await OpenAI_Chat(page, instructions), { page, test });
+    // await ai(await OpenAI_Chat(page, instructions), { page, test });
  
-    //await PageUtils.waitForPageLoad(page);
+    // //await PageUtils.waitForPageLoad(page);
 
-    await NextAvailableTime_Page.verifyOnPage(page);
+    // await NextAvailableTime_Page.verifyOnPage(page);
 
-    await ai(await OpenAI_Chat(page, instructions), { page, test });
+    // await ai(await OpenAI_Chat(page, instructions), { page, test });
 
-    await NextSteps_Page.verifyOnPage(page);
+    // await NextSteps_Page.verifyOnPage(page);
 
-    //await Anthropic_Chat(page, instructions);
+    // await ai(await OpenAI_Chat(page, instructions), { page, test });
 
+    ////////////////////////////////
+    await WhatStateDoYouLiveIn_Page.navigate(page);
+    await WhatStateDoYouLiveIn_Page.clickStateButton(page, weightLossClient.state);
+  
+    await NextAvailableTime_Page.clickFirstAppointment(page);
+  
+    await NextSteps_Page.clickContinue(page);
 
+    await ContactDetails_Page.verifyOnPage(page);
+
+    const pageActions = await OpenAI_Chat(page, instructions);
+
+    await performActions(page, test, pageActions);
+
+    await Shipping_Page.verifyOnPage(page);
+
+    const pageActions2 = await OpenAI_Chat(page, instructions);
+
+    await performActions(page, test, pageActions2);
+
+    await Payment_Page.verifyOnPage(page);
+    await Payment_Page.verifyFirstName(page, weightLossClient.legalFirstName);
+    await Payment_Page.verifyLastName(page, weightLossClient.legalLastName);
 });
 
-async function OpenAI_Chat(page: Page, message: string): Promise<string> {
+async function performActions(page: Page, test: APITestType, pageActions: string[]): Promise<void> {
+    for (const pageAction of pageActions) {
+        await ai(pageAction, { page, test });
+    }
+}
+
+
+async function OpenAI_Chat(page: Page, message: string): Promise<string[]> {
 
     const apiKey = process.env['OPENAI_API_KEY'];
     if (!apiKey) {
@@ -59,24 +97,43 @@ async function OpenAI_Chat(page: Page, message: string): Promise<string> {
 
     const strippedDownHTML = await stripDownHTML(page);
 
-    console.log("strippedDownHTML: " + strippedDownHTML);
-
     const content = message + "This the html of the page I'm looking at now: " + strippedDownHTML;
 
     // Create a chat completion
     const chatCompletion = await openai.chat.completions.create({
         messages: [{ role: 'user', content}],
         model: 'gpt-4-turbo-preview', // https://platform.openai.com/docs/models/
+        temperature : 0.1,
     });
 
     const response = chatCompletion.choices[0].message.content;
     // Output the result
     if(response){
         console.log("OpenAI response [" + response + "]");
-        return response;
+        return splitString(response);
     }else{
         throw new Error("Response was empty");
     }
+}
+
+function splitString(inputString: string): string[] {
+    // Check if the input string contains "],["
+    if (!inputString.includes("],[")) {
+        // If it doesn't contain the pattern, return the original string inside an array
+        return [inputString];
+    }
+
+    // Split the string at each occurrence of "],["
+    const result = inputString.split("],[");
+    
+    // The first and last elements will contain additional brackets ("[[" and "]]"), so we trim those
+    if (result.length > 0) {
+        result[0] = result[0].replace(/^\[\[/, ""); // Remove the leading "[["
+        const lastIndex = result.length - 1;
+        result[lastIndex] = result[lastIndex].replace(/\]\]$/, ""); // Remove the trailing "]]"
+    }
+    
+    return result;
 }
 
 

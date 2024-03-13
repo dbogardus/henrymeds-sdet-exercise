@@ -30,6 +30,23 @@ export class ClientPerson {
         this.sexAssignedAtBirth = builder.getSexAssignedAtBirth();
         this.preferredPronouns = builder.getPreferredPronouns();
     }
+
+    toString(): string {
+        return `Therapy: ${Therapy[this.therapy]}, ` +
+               `State: ${StateText[this.state]}, ` +
+               `Legal First Name: ${this.legalFirstName}, ` +
+               `Legal Last Name: ${this.legalLastName}, ` +
+               `Email: ${this.email}, ` +
+               `Date Of Birth: ${this.dateOfBirth}, ` +
+               `Phone Number: ${this.phoneNumber}, ` +
+               `Shipping Address Line 1: ${this.shippingAddressLine1}, ` +
+               `Shipping Address Line 2: ${this.shippingAddressLine2}, ` +
+               `Shipping City: ${this.shippingCity}, ` +
+               `Shipping Zip: ${this.shippingZip}, ` +
+               `Billing and Shipping Address Is The Same: ${this.billingAndShippingAddressIsTheSame}, ` +
+               `Sex Assigned At Birth: ${SexAssignedAtBirthText[this.sexAssignedAtBirth]}, ` +
+               `Preferred Pronouns: ${PreferredPronounsText[this.preferredPronouns]}`;
+    }
 }
 
 
