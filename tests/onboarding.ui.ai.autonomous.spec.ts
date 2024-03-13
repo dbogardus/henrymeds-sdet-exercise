@@ -1,6 +1,7 @@
 import { test, Page } from "@playwright/test";
 import { OpenAI } from "openai";
 import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ai } from '@zerostep/playwright';
 import { WhatStateDoYouLiveIn_Page } from './pageobjects/onboarding/weight-loss/what-state-do-you-live-in-page';
 import { NextAvailableTime_Page } from './pageobjects/onboarding/weight-loss/next-available-time-page';
@@ -28,13 +29,15 @@ test("Onboarding test using Autonomous AI", async ({ page }) => {
 
     const weightLossClient: ClientPerson = new ClientPersonBuilder().setTherapy(Therapy.WEIGHT_LOSS).build();
 
-    //await WhatStateDoYouLiveIn_Page.navigate(page);
+    await WhatStateDoYouLiveIn_Page.navigate(page);
 
-    const instructions = "I am a new weight loss patient, trying to complete onboarding to get some medication. Tell me what action I need to take in my web browser to proceed to the next page if I live in the state of California";
+    const instructions = "I am a new weight loss patient, trying to complete onboarding to get some medication. Tell me what action I need to take in my web browser to proceed to the next page if I live in the state of California. Give me the instructions to click the button for California. Your reply should be one sentence with the exact action I need to take.";
 
-    //const instructionsForPageInteractions = await OpenAI_Chat(page, instructions);
+    const instructionsForPageInteractions = await OpenAI_Chat(page, instructions);
 
-    await Anthropic_Chat(page, instructions);
+    //await Anthropic_Chat(page, instructions);
+
+    //await Gemini_Chat(page, instructions);
 });
 
 async function OpenAI_Chat(page: Page, message: string) {
@@ -43,7 +46,7 @@ async function OpenAI_Chat(page: Page, message: string) {
         apiKey: process.env['OPENAI_API_KEY'], // Replace with your actual API key
       });
 
-    const content = message + "This the html of the page I'm looking at now: " + await page.content();
+    const content = message + "This the html of the page I'm looking at now: " + await stripDownHTML(page);
 
     try {
         // Create a chat completion
@@ -67,7 +70,7 @@ async function Anthropic_Chat(page: Page, message: string) {
         apiKey: process.env['ANTHROPIC_API_KEY'], // Ensure your API key is stored in your environment variables
       });
 
-    const content = message + "This the html of the page I'm looking at now: " + await page.content();
+    const content = message + "This the html of the page I'm looking at now: " + await stripDownHTML(page);
 
     try {
         const message = await anthropic.messages.create({
@@ -88,3 +91,42 @@ async function Anthropic_Chat(page: Page, message: string) {
 }
 
 
+async function Gemini_Chat(page: Page, message: string) {
+
+    const content = message + "This the html of the page I'm looking at now: " + await page.content();
+
+    console.log(content);
+
+    try {
+        const geminiApiKey = process.env['GEMINI_API_KEY'];
+        if (!geminiApiKey) {
+            throw new Error("GEMINI_API_KEY is not defined in the environment variables");
+        }
+        const genAI = new GoogleGenerativeAI(geminiApiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+        const prompt = content;
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        console.log(text);
+
+      } catch (error) {
+        // Handle any errors that occur during the API call
+        console.error(error);
+      }
+}
+
+
+async function stripDownHTML(page: Page): Promise<string> {
+    // Evaluate script within the page context to manipulate the DOM directly
+    await page.evaluate(() => {
+        // Remove <style>, <link> with rel="stylesheet", and <script> elements
+        document.querySelectorAll('style, link[rel="stylesheet"], script').forEach(e => e.remove());
+        
+        // Optionally, remove any inline styles
+        document.querySelectorAll('[style]').forEach(e => e.removeAttribute('style'));
+    });
+
+    // Return the modified HTML
+    return await page.content();
+}
