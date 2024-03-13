@@ -3,7 +3,7 @@ import { OpenAI } from "openai";
 import { ai } from '@zerostep/playwright';
 import { WhatStateDoYouLiveIn_Page } from './pageobjects/onboarding/weight-loss/what-state-do-you-live-in-page';
 import { Payment_Page } from './pageobjects/onboarding/weight-loss/payment-page';
-import ClientPersonBuilder, { ClientPerson, PreferredPronounsText, SexAssignedAtBirthText, StateText, Therapy } from "./types/clientPerson";
+import ClientPersonBuilder, { ClientPerson, Therapy } from "./types/clientPerson";
 import { PageUtils } from "./utils/pageUtils";
 import { APITestType } from "@zerostep/playwright/lib/types";
 
@@ -24,7 +24,7 @@ import { APITestType } from "@zerostep/playwright/lib/types";
 
 test("Onboarding test using Autonomous AI", async ({ page }) => {
 
-    test.setTimeout(120000); // Test can take a while due to calls to artificial intelligence APIs
+    test.setTimeout(120000); // Test can take a while due to calls to 2 different AI APIs
 
     const weightLossClient: ClientPerson = new ClientPersonBuilder().setTherapy(Therapy.WEIGHT_LOSS).build();
 
@@ -33,7 +33,8 @@ test("Onboarding test using Autonomous AI", async ({ page }) => {
         "The page you are interacting with is part of an onboarding process." + 
         "If the page asks to select next available time, click the button with the first available time. " + 
         "If a form needs to be filled in, please indicate what to fill in each field, including the label on the field and the contents that should be filled in. " +
-        "If you see checkboxes, give instructions to click each of them." +
+        "If you see checkboxes that aren't checked, give instructions to check them. " +
+        "Be vigalant to ensure that if there's a 'Continue' button, it is clicked last. " +
         "If there is more than one action needed to interact with a page, return it in the format of [ACTION1],[ACTION2],[ACTION3], etc.  " +
         "Some examples actions are [Fill in first name with 'Thomas'], or [Click the button labeled 'Continue'] . " + 
         "Ignore any elements that are related to cookies or privacy policies. " +
@@ -61,7 +62,7 @@ test("Onboarding test using Autonomous AI", async ({ page }) => {
         
         PageUtils.waitForPageLoad(page);
 
-        await page.waitForTimeout(2500); // Wait to allow the page to load, only way I could make it stable. Maybe there's some better way? 
+        await page.waitForTimeout(2500); //The page wait for load strategies don't work reliably, so we add a delay to ensure the page is loaded
     }
 
 

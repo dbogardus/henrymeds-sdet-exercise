@@ -50,9 +50,9 @@ export class PageUtils {
 }
 
   static async waitForPageLoad(page: Page): Promise<void> {
-    await page.waitForLoadState('load');
-    await page.waitForLoadState('domcontentloaded')
     await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded')
+    await page.waitForLoadState('load');
     await page.waitForSelector('body');
   }
 
