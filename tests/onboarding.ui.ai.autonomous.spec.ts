@@ -8,10 +8,8 @@ import { PageUtils } from "./utils/pageUtils";
 import { APITestType } from "@zerostep/playwright/lib/types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// This test uses OpenAI to analyze web pages and get instructions on what is needed to complete thge web page, 
-// Then usese Zerostep to perform the interaction with the page. 
-//
-// The test has no foreknowledge of what to expect, it must use the AI utilities to analyze and interact with each page. 
+// This test uses OpenAI to analyze web pages and get instructions on interacting with the page, 
+// then usese Zerostep to perform the interaction. 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,24 +43,24 @@ test("Onboarding test using Autonomous AI", async ({ page }) => {
     await WhatStateDoYouLiveIn_Page.navigate(page);
 
     let pageLoadCount = 0;
-    let maxPageLoadCount = 10;
+    let maxPageLoadCount = 10; // We don't want to loop forever
 
     while (pageLoadCount < maxPageLoadCount) {
         pageLoadCount++;
-        console.log(`Loop ${pageLoadCount}: Current page title is [${await page.title()}]`);
+        console.log(`Loop ${pageLoadCount}: Page title is [${await page.title()}]`);
         
         const pageActions = await OpenAI_Chat(page, instructions_for_ai);
 
         if (pageActions.length === 1 && pageActions[0] === "FINISHED") {
             console.log("Breaking out of the loop, AI says we're finished");
-            break; // This exits the while loop
+            break; 
         }
 
         await performPageActions(page, test, pageActions);
         
         PageUtils.waitForPageLoad(page);
 
-        await page.waitForTimeout(2500); //The page wait for load strategies don't work reliably, so we add a delay to ensure the page is loaded
+        await page.waitForTimeout(2500); //page.waitForLoadState doesn't work reliably ¯\_(ツ)_/¯
     }
 
 
