@@ -61,7 +61,7 @@ test("Onboarding test using Autonomous AI", async ({ page }) => {
         
         PageUtils.waitForPageLoad(page);
 
-        await page.waitForTimeout(2500);
+        await page.waitForTimeout(2500); // Wait to allow the page to load, only way I could make it stable. Maybe there's some better way? 
     }
 
 
